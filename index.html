@@ -1,381 +1,272 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#002B66">
-  <title>King Power - Express Email QR</title>
+  <title>King Power - Passenger Email Registration</title>
   
-  <!-- ไลบรารีสร้าง QR Code (โหลดจาก CDN สำหรับมือถือลูกค้า) -->
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- QRCode.js Library for Real Scannable QR -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#eceef0",
+            "inverse-surface": "#2d3133",
+            "surface-bright": "#f7f9fb",
+            "primary": "#00173e",
+            "primary-container": "#002b66",
+            "secondary": "#775a19",
+            "secondary-fixed": "#ffdea5",
+            "on-primary": "#ffffff",
+            "on-surface": "#191c1e",
+            "outline": "#747781",
+            "outline-variant": "#c4c6d1",
+          }
+        },
+      },
+    }
+  </script>
   <style>
-    :root {
-      --kp-blue: #002B66;
-      --kp-blue-dark: #001B44;
-      --kp-gold: #C5A059;
-      --kp-gold-light: #F7F1E5;
-      --kp-gold-dark: #9F7E3B;
-      --bg-color: #F4F7FC;
-      --card-bg: #FFFFFF;
-      --text-main: #1D2939;
-      --text-muted: #667085;
-      --border-color: #E4E7EC;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Sarabun", sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-    }
-
-    /* Container */
-    .container {
-      width: 100%;
-      max-width: 480px;
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* Brand Header Card with Logo Image */
-    .brand-header {
-      background: linear-gradient(135deg, var(--kp-blue-dark) 0%, var(--kp-blue) 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0, 43, 102, 0.2);
-      border: 1px solid rgba(197, 160, 89, 0.4);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-logo-img {
-      height: 44px;
-      width: auto;
-      object-fit: contain;
-    }
-
-    .brand-header h1 {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .brand-header p {
-      font-size: 12px;
-      color: var(--kp-gold);
-      font-weight: 500;
-    }
-
-    /* Card Box */
-    .card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-      border: 1px solid var(--border-color);
-    }
-
-    .section-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--kp-blue);
-      margin-bottom: 4px;
-    }
-
-    .section-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
-
-    /* Input Field */
-    .input-group {
-      margin-bottom: 14px;
-    }
-
-    .input-field {
-      width: 100%;
-      height: 54px;
-      padding: 12px 16px;
-      font-size: 17px;
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      outline: none;
-      transition: all 0.2s;
-      background: #FAFCFF;
-      color: var(--text-main);
-    }
-
-    .input-field:focus {
-      border-color: var(--kp-blue);
-      background: #FFFFFF;
-      box-shadow: 0 0 0 4px rgba(0, 43, 102, 0.1);
-    }
-
-    /* Domain Shortcuts */
-    .domain-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--kp-gold-dark);
-      margin-bottom: 8px;
-    }
-
-    .domain-pills {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .pill-btn {
-      background: var(--kp-gold-light);
-      border: 1px solid rgba(197, 160, 89, 0.4);
-      color: var(--kp-blue-dark);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 10px 2px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.15s;
-    }
-
-    .pill-btn:active {
-      transform: scale(0.95);
-      background: var(--kp-gold);
-      color: white;
-    }
-
-    /* Submit Button */
-    .btn-submit {
-      width: 100%;
-      height: 52px;
-      background: linear-gradient(135deg, var(--kp-blue) 0%, var(--kp-blue-dark) 100%);
-      color: white;
-      border: 1.5px solid var(--kp-gold);
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(0, 43, 102, 0.25);
-    }
-
-    .btn-submit:active {
-      transform: translateY(1px);
-    }
-
-    /* Result View (Hidden by default) */
-    #resultView {
-      display: none;
-      text-align: center;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .qr-box {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
       display: inline-block;
-      margin: 12px 0;
-      border: 3px solid var(--kp-gold);
-      box-shadow: 0 4px 16px rgba(0, 43, 102, 0.12);
-    }
-
-    .qr-box img, .qr-box canvas {
-      display: block;
-      margin: 0 auto;
-    }
-
-    .email-highlight {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--kp-blue);
-      background: var(--kp-gold-light);
-      padding: 10px 14px;
-      border-radius: 8px;
-      word-break: break-all;
-      margin: 10px 0 16px;
-    }
-
-    .instruction-box {
-      background: #F0FDF4;
-      border: 1px solid #DCFCE7;
-      color: #166534;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 16px;
-      text-align: left;
-      line-height: 1.4;
-    }
-
-    .btn-reset {
-      background: #F2F4F7;
-      color: var(--text-main);
-      border: none;
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
     }
   </style>
 </head>
-<body>
+<body class="bg-[#F4F7FC] text-[#191c1e] antialiased min-h-screen flex flex-col items-center">
 
-  <div class="container">
-    
-    <!-- Brand Header with Logo Image -->
-    <div class="brand-header">
-      <img src="logo.png" alt="King Power Logo" class="brand-logo-img">
-      <h1>Passenger Email Registration</h1>
-      <p>扫码登记邮箱 • กรอกอีเมลรับสิทธิ์ด่วน</p>
-    </div>
-
-    <!-- Step 1: Input Form -->
-    <div class="card" id="formCard">
-      <div class="section-title">✉️ กรอกอีเมลของคุณ / 请输入您的电子邮箱</div>
-      <div class="section-subtitle">พิมพ์อีเมลเพื่อสร้าง QR ส่วนตัวยื่นให้แคชเชียร์สแกน</div>
-
-      <div class="input-group">
-        <input 
-          type="email" 
-          id="emailInput" 
-          class="input-field" 
-          placeholder="your.email@domain.com"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-        >
-      </div>
-
-      <!-- Quick Domains -->
-      <div class="domain-label">⚡ ปุ่มลัดอีเมลยอดฮิต / 快速选择后缀:</div>
-      <div class="domain-pills">
-        <button type="button" class="pill-btn" onclick="appendDomain('@gmail.com')">@gmail.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@qq.com')">@qq.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@163.com')">@163.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@126.com')">@126.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@icloud.com')">@icloud.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@yahoo.com')">@yahoo.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@hotmail.com')">@hotmail.com</button>
-        <button type="button" class="pill-btn" onclick="appendDomain('@outlook.com')">@outlook.com</button>
-      </div>
-
-      <button type="button" class="btn-submit" onclick="generateMyQR()">
-        <span>✓</span> สร้าง QR Code ส่วนตัว / 生成二维码
-      </button>
-    </div>
-
-    <!-- Step 2: Result QR View -->
-    <div class="card" id="resultView">
-      <div class="section-title" style="color: #039855;">📱 QR Code ของคุณพร้อมแล้ว</div>
-      <div class="section-subtitle">请向收银员出示此二维码 • ยื่นหน้าจอนี้ให้พนักงานสแกน</div>
-
-      <div class="qr-box" id="qrcodeContainer"></div>
-
-      <div class="email-highlight" id="displayEmail">user@email.com</div>
-
-      <div class="instruction-box">
-        💡 <b>คำแนะนำสำหรับลูกค้า:</b><br>
-        กรุณายื่นหน้าจอนี้ให้พนักงานแคชเชียร์ใช้เครื่องสแกนยิงที่ QR Code ด้านบนเพื่อบันทึกอีเมลเข้าระบบทันที
-      </div>
-
-      <button type="button" class="btn-reset" onclick="resetForm()">
-        🔄 กรอกใหม่อีกครั้ง / 重新输入
-      </button>
-    </div>
-
+<!-- Top AppBar with logo.png -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 max-w-[440px] mx-auto h-14 bg-white border-b border-gray-200 shadow-sm">
+  <div class="flex items-center py-1.5">
+    <img src="logo.png" alt="King Power Duty Free" class="h-10 object-contain rounded-sm" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'40\'><rect width=\'120\' height=\'40\' fill=\'%23002B66\'/><text x=\'10\' y=\'25\' fill=\'white\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'14\'>KING POWER</text></svg>';">
   </div>
+  <div class="flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+    <span>🇨🇳 / 🇹🇭 / 🇬🇧</span>
+  </div>
+</header>
 
-  <script>
-    function appendDomain(domain) {
-      const input = document.getElementById('emailInput');
-      let val = input.value.trim();
-      if (!val) {
-        input.value = domain;
-        input.focus();
-        return;
-      }
-      if (val.includes('@')) {
-        val = val.split('@')[0];
-      }
-      input.value = val + domain;
-      input.focus();
+<!-- Main Viewport Shell Container -->
+<main class="w-full max-w-[440px] px-4 pt-16 pb-24 flex flex-col space-y-4">
+
+  <!-- Section 1: Crown Brand Hero Card -->
+  <section class="mt-2 bg-gradient-to-b from-[#002b66] to-[#00173e] rounded-xl p-5 text-center text-white shadow-lg relative overflow-hidden border border-amber-300/20">
+    <div class="flex flex-col items-center justify-center space-y-1 relative z-10">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-300/40 text-amber-200 text-xs font-semibold tracking-wide mb-1">
+        <span class="material-symbols-outlined text-xs">verified</span>
+        <span>Airport Duty Free Quick Scan</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight text-white pt-1">
+        Passenger Email Registration
+      </h1>
+      <p class="text-amber-200 text-xs font-medium">
+        扫码登记邮箱 • กรอกอีเมลรับสิทธิ์ด่วน
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 2: Input & Domain Pill Action Card -->
+  <section class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+    <div class="mb-3">
+      <div class="flex items-center space-x-1.5 text-[#00173e]">
+        <span class="material-symbols-outlined text-[#00173e]">mail</span>
+        <span class="text-sm font-bold">กรอกอีเมลของคุณ / 请输入您的电子邮箱</span>
+      </div>
+      <p class="text-xs text-gray-500 mt-0.5">
+        พิมพ์อีเมลเพื่อสร้าง QR ส่วนตัวยื่นให้แคชเชียร์สแกน / Enter email for QR pass
+      </p>
+    </div>
+
+    <!-- Interactive Input Field -->
+    <div class="relative flex items-center mt-2 mb-4">
+      <div class="absolute left-3.5 flex items-center pointer-events-none text-gray-400">
+        <span class="material-symbols-outlined">alternate_email</span>
+      </div>
+      <input class="w-full pl-10 pr-10 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-800 text-sm focus:border-[#002b66] focus:ring-2 focus:ring-amber-200 transition-all outline-none" id="email-input" placeholder="your.email@domain.com" type="email" autocomplete="off" autocapitalize="off">
+      <button aria-label="Clear email input" class="absolute right-3 text-gray-400 hover:text-red-500 active:scale-90 transition-transform p-1 rounded-full flex items-center justify-center" onclick="document.getElementById('email-input').value=''; document.getElementById('email-input').focus();">
+        <span class="material-symbols-outlined text-base">cancel</span>
+      </button>
+    </div>
+
+    <!-- Quick Domain Pills Section -->
+    <div class="mb-4">
+      <div class="flex items-center gap-1.5 mb-2 text-amber-700">
+        <span class="material-symbols-outlined text-sm">bolt</span>
+        <span class="text-xs font-semibold tracking-wide">
+          ปุ่มลัดอีเมลยอดฮิต / 快速选择后缀:
+        </span>
+      </div>
+      <!-- 4-Column Domain Grid -->
+      <div class="grid grid-cols-4 gap-1.5">
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@gmail.com')">@gmail.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@qq.com')">@qq.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@163.com')">@163.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@126.com')">@126.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@icloud.com')">@icloud.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@yahoo.com')">@yahoo.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@hotmail.com')">@hotmail.com</button>
+        <button type="button" class="px-1 py-2 bg-amber-50 hover:bg-amber-100 active:scale-95 border border-amber-200 rounded-lg text-center text-[#00173e] text-xs font-semibold transition-all truncate" onclick="appendDomain('@outlook.com')">@outlook.com</button>
+      </div>
+    </div>
+
+    <!-- Primary Action CTA Button -->
+    <button type="button" class="w-full py-3.5 px-4 rounded-xl bg-[#002b66] text-white flex items-center justify-center space-x-2 shadow-md hover:bg-[#00173e] transition-all active:scale-[0.98] border border-amber-400/40" onclick="generateCode()">
+      <span class="material-symbols-outlined text-amber-300">qr_code_scanner</span>
+      <span class="text-sm font-bold tracking-wide">
+        สร้าง QR Code ส่วนตัว / 生成二维码
+      </span>
+    </button>
+  </section>
+
+  <!-- Section 3: High-Contrast Real-Time QR Presentation Plinth -->
+  <section class="bg-white rounded-xl p-5 border border-amber-300/60 shadow-sm flex flex-col items-center text-center relative">
+    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-medium mb-4 border border-amber-200">
+      <span class="material-symbols-outlined text-amber-600 text-sm">light_mode</span>
+      <span>เพิ่มความสว่างหน้าจอเพื่อให้สแกนได้เร็วขึ้น / 请调亮屏幕</span>
+    </div>
+
+    <!-- Pure White QR Code Medallion Box -->
+    <div class="p-3 bg-white rounded-2xl border-2 border-amber-500 shadow-md relative mb-3">
+      <div id="qrcode-container" class="flex justify-center items-center"></div>
+    </div>
+
+    <!-- Cashier Verification Readout -->
+    <div class="w-full bg-gray-50 py-2.5 px-3 rounded-xl border border-gray-200 mb-3">
+      <span class="text-xs text-gray-400 block">รหัสสมาชิก / 会员邮箱</span>
+      <span class="text-sm text-[#00173e] font-bold break-all" id="qr-email-label">
+        กรอกอีเมลด้านบนแล้วกดสร้าง QR
+      </span>
+    </div>
+
+    <!-- Instruction Note -->
+    <div class="flex items-center justify-center gap-1.5 text-emerald-700 text-xs font-medium bg-emerald-50 w-full py-2 rounded-lg border border-emerald-100">
+      <span class="material-symbols-outlined text-emerald-600 text-base">verified_user</span>
+      <span>ยื่นหน้าจอนี้ให้พนักงานแคชเชียร์สแกน / 请出示给收银员</span>
+    </div>
+
+    <!-- Action Footer for QR Screen -->
+    <div class="w-full flex items-center justify-between gap-2 mt-4 pt-3 border-t border-gray-100">
+      <button type="button" class="flex-1 py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100 text-xs font-semibold flex items-center justify-center gap-1" onclick="document.getElementById('email-input').focus(); window.scrollTo({top: 0, behavior: 'smooth'});">
+        <span class="material-symbols-outlined text-base">edit</span>
+        <span>แก้ไขอีเมล / Edit</span>
+      </button>
+      <button type="button" class="flex-1 py-2 px-3 rounded-lg bg-gray-100 text-[#00173e] hover:bg-amber-100 text-xs font-semibold flex items-center justify-center gap-1" onclick="resetForm()">
+        <span class="material-symbols-outlined text-base">refresh</span>
+        <span>ล้างค่า / Reset</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Section 4: Security & Privilege Banner -->
+  <section class="bg-gray-100 rounded-xl p-4 border border-gray-200 flex items-start space-x-3">
+    <div class="text-amber-700 p-1 rounded-lg bg-amber-100 mt-0.5">
+      <span class="material-symbols-outlined text-lg">shield</span>
+    </div>
+    <div class="text-left">
+      <h4 class="text-xs font-bold text-[#00173e]">Duty Free Passenger Privilege</h4>
+      <p class="text-[11px] text-gray-600 mt-0.5 leading-relaxed">
+        ข้อมูลของคุณจะถูกใช้สำหรับการยืนยันการรับสิทธิ์ส่วนลดและบริการสะสมคะแนน King Power เท่านั้น ปลอดภัยตามมาตรฐานสากล
+      </p>
+    </div>
+  </section>
+</main>
+
+<!-- Interactive JavaScript Logic -->
+<script>
+  let qrCodeInstance = null;
+
+  function initQR() {
+    const container = document.getElementById('qrcode-container');
+    container.innerHTML = '';
+    qrCodeInstance = new QRCode(container, {
+      text: "traveler.dutyfree@gmail.com",
+      width: 200,
+      height: 200,
+      colorDark: "#00173e",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  function appendDomain(domain) {
+    const emailInput = document.getElementById('email-input');
+    let currentVal = emailInput.value.trim();
+    
+    if (currentVal.includes('@')) {
+      const prefix = currentVal.split('@')[0];
+      emailInput.value = (prefix.length > 0 ? prefix : 'passenger') + domain;
+    } else if (currentVal.length > 0) {
+      emailInput.value = currentVal + domain;
+    } else {
+      emailInput.value = 'passenger' + domain;
     }
+    generateCode();
+  }
 
-    function generateMyQR() {
-      const input = document.getElementById('emailInput');
-      const email = input.value.trim();
-
-      if (!email) {
-        alert('กรุณากรอกอีเมล / 请输入您的电子邮箱');
-        input.focus();
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('รูปแบบอีเมลไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง\n邮箱格式不正确');
-        input.focus();
-        return;
-      }
-
-      // Hide form, show result QR
-      document.getElementById('formCard').style.display = 'none';
-      document.getElementById('resultView').style.display = 'block';
-      document.getElementById('displayEmail').innerText = email;
-
-      const container = document.getElementById('qrcodeContainer');
-      container.innerHTML = '';
-
-      // Generate QR Code
-      new QRCode(container, {
-        text: email,
-        width: 220,
-        height: 220,
-        colorDark: "#001B44",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
+  function generateCode() {
+    const emailInput = document.getElementById('email-input');
+    let val = emailInput.value.trim();
+    if (!val) {
+      alert('กรุณากรอกอีเมลก่อนสร้าง QR Code / 请输入您的电子邮箱');
+      emailInput.focus();
+      return;
     }
+    
+    document.getElementById('qr-email-label').textContent = val;
+    
+    // Update QR Code dynamically
+    const container = document.getElementById('qrcode-container');
+    container.innerHTML = '';
+    new QRCode(container, {
+      text: val,
+      width: 200,
+      height: 200,
+      colorDark: "#00173e",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
 
-    function resetForm() {
-      document.getElementById('emailInput').value = '';
-      document.getElementById('resultView').style.display = 'none';
-      document.getElementById('formCard').style.display = 'block';
-      document.getElementById('emailInput').focus();
-    }
-  </script>
+  function resetForm() {
+    document.getElementById('email-input').value = '';
+    document.getElementById('qr-email-label').textContent = 'กรอกอีเมลด้านบนแล้วกดสร้าง QR';
+    const container = document.getElementById('qrcode-container');
+    container.innerHTML = '';
+    new QRCode(container, {
+      text: "waiting.for.email@kingpower.com",
+      width: 200,
+      height: 200,
+      colorDark: "#00173e",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    document.getElementById('email-input').focus();
+  }
+
+  // Run initial QR on load
+  window.onload = function() {
+    initQR();
+  };
+</script>
+
 </body>
 </html>
