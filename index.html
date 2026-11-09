@@ -51,7 +51,7 @@
       gap: 16px;
     }
 
-    /* Brand Header Card */
+    /* Brand Header Card with Logo Image */
     .brand-header {
       background: linear-gradient(135deg, var(--kp-blue-dark) 0%, var(--kp-blue) 100%);
       color: white;
@@ -60,29 +60,22 @@
       text-align: center;
       box-shadow: 0 4px 16px rgba(0, 43, 102, 0.2);
       border: 1px solid rgba(197, 160, 89, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
-    .brand-badge {
-      display: inline-block;
-      background: white;
-      color: var(--kp-blue);
-      font-weight: 900;
-      font-size: 13px;
-      padding: 4px 12px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      border: 1px solid var(--kp-gold);
-    }
-
-    .brand-badge span {
-      color: var(--kp-gold-dark);
+    .brand-logo-img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
     }
 
     .brand-header h1 {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .brand-header p {
@@ -261,9 +254,9 @@
 
   <div class="container">
     
-    <!-- Brand Header -->
+    <!-- Brand Header with Logo Image -->
     <div class="brand-header">
-      <div class="brand-badge">KING<span>POWER</span></div>
+      <img src="logo.png" alt="King Power Logo" class="brand-logo-img">
       <h1>Passenger Email Registration</h1>
       <p>扫码登记邮箱 • กรอกอีเมลรับสิทธิ์ด่วน</p>
     </div>
