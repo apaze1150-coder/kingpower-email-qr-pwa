@@ -192,35 +192,56 @@
 
 <!-- Interactive JavaScript Logic -->
 <script>
-  let qrCodeInstance = null;
+ let qrCodeInstance = null;
 
-  function initQR() {
-    const container = document.getElementById('qrcode-container');
+// ฟังก์ชันสร้าง/อัปเดต QR Code ทันที
+function updateQRRealtime(text) {
+  const container = document.getElementById('qrcode-container');
+  const label = document.getElementById('qr-email-label');
+  const cleanText = text.trim();
+
+  if (!cleanText) {
+    label.textContent = 'กรอกอีเมลด้านบนเพื่อสร้าง QR Code ทันที';
     container.innerHTML = '';
-    qrCodeInstance = new QRCode(container, {
-      text: "traveler.dutyfree@gmail.com",
-      width: 200,
-      height: 200,
-      colorDark: "#00173e",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.M
-    });
+    return;
   }
 
-  function appendDomain(domain) {
-    const emailInput = document.getElementById('email-input');
-    let currentVal = emailInput.value.trim();
-    
-    if (currentVal.includes('@')) {
-      const prefix = currentVal.split('@')[0];
-      emailInput.value = (prefix.length > 0 ? prefix : 'passenger') + domain;
-    } else if (currentVal.length > 0) {
-      emailInput.value = currentVal + domain;
-    } else {
-      emailInput.value = 'passenger' + domain;
-    }
-    generateCode();
+  label.textContent = cleanText;
+
+  // วาด QR Code ใหม่ทันทีแบบ Realtime
+  container.innerHTML = '';
+  new QRCode(container, {
+    text: cleanText,
+    width: 200,
+    height: 200,
+    colorDark: "#00173e",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+// 1. ดักจับการพิมพ์ทุกตัวอักษรแบบ Realtime
+document.getElementById('email-input').addEventListener('input', function(e) {
+  updateQRRealtime(e.target.value);
+});
+
+// 2. เมื่อกดปุ่มลัดโดเมน ให้ต่อท้ายและอัปเดต QR ทันที
+function appendDomain(domain) {
+  const emailInput = document.getElementById('email-input');
+  let currentVal = emailInput.value.trim();
+  
+  if (currentVal.includes('@')) {
+    const prefix = currentVal.split('@')[0];
+    emailInput.value = (prefix.length > 0 ? prefix : 'passenger') + domain;
+  } else if (currentVal.length > 0) {
+    emailInput.value = currentVal + domain;
+  } else {
+    emailInput.value = 'passenger' + domain;
   }
+  
+  // อัปเดต QR Code ทันทีไม่ต้องรอกดปุ่ม
+  updateQRRealtime(emailInput.value);
+}
 
   function generateCode() {
     const emailInput = document.getElementById('email-input');
